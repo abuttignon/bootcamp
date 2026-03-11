@@ -1,0 +1,24 @@
+# Python-generated files
+__pycache__/
+*.py[oc]
+build/
+dist/
+wheels/
+*.egg-info
+*.iml
+.idea/*
+
+# Virtual environments
+.venv
+.env
+/.idea/
+/uv.lock
+
+# data
+/data/interim/*
+/data/processed/*
+/data/retrieved/*
+
+mlflow.db
+/mlruns/*
+/mlflow_artifacts/*

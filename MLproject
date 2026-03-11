@@ -1,0 +1,49 @@
+name: data_curation_pipeline
+
+entry_points:
+
+  normalize_pdf_to_json:
+    parameters:
+        mlflow_pipeline_id: str
+    command: "python -m src.ml_ops_experiment.ingestion.convert_pdf_to_json --mlflow_pipeline_id={mlflow_pipeline_id}"
+
+  normalize_txt_to_json:
+    parameters:
+        mlflow_pipeline_id: str
+    command: "python -m src.ml_ops_experiment.ingestion.convert_txt_to_json --mlflow_pipeline_id={mlflow_pipeline_id}"
+
+  normalized_to_chunks:
+    parameters:
+        mlflow_pipeline_id: str
+    command: "python -m src.ml_ops_experiment.ingestion.convert_json_to_jsonl --mlflow_pipeline_id={mlflow_pipeline_id}"
+
+  chunks_to_db:
+    parameters:
+        mlflow_pipeline_id: str
+    command: "python -m src.ml_ops_experiment.ingestion.upload_jsonl_to_db --mlflow_pipeline_id={mlflow_pipeline_id}"
+
+  indexing:
+    parameters:
+        mlflow_pipeline_id: str
+    command: "python -m src.ml_ops_experiment.indexing.indexing --mlflow_pipeline_id={mlflow_pipeline_id}"
+
+  retrieval:
+    parameters:
+        mlflow_pipeline_id: str
+    command: "python -m src.ml_ops_experiment.retrieval.retrieval --mlflow_pipeline_id={mlflow_pipeline_id}"
+
+  register_prompts:
+    parameters:
+        mlflow_pipeline_id: str
+    command: "python -m src.ml_ops_experiment.prompt_engineering.register_prompts --mlflow_pipeline_id={mlflow_pipeline_id}"
+
+  evaluate_prompts:
+    parameters:
+        mlflow_pipeline_id: str
+        dataset_path: {type: str, default: "data/eval/python_eval_dataset.json"}
+        prompts_to_evaluate: {type: str, default: "python_assistant_v1,python_assistant_v2,python_assistant_v3,python_assistant_v4,python_assistant_v5,python_assistant_v6"}
+        max_cases: {type: int, default: 5}
+    command: "python -m src.ml_ops_experiment.prompt_engineering.evaluate_prompts --mlflow_pipeline_id={mlflow_pipeline_id} --dataset-path={dataset_path} --prompts-to-evaluate={prompts_to_evaluate} --max-cases={max_cases}"
+
+  main:
+    command: "python scripts/run_mlflow_pipeline.py"

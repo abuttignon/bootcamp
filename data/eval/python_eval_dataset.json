@@ -1,0 +1,1225 @@
+{
+  "assumption": "Data science source assumption: scikit-learn topics grounded in Jake VanderPlas' Python Data Science Handbook (online text), and from-scratch perceptron/gradient-descent/SGD items grounded in Sebastian Raschka's 'Python Machine Learning (3rd ed.)' Chapter 2 code (rasbt GitHub repo).",
+  "executive_summary": "This JSON dataset contains 50 grounded QA evaluation cases for a RAG-based Python engineering copilot: 25 targeting Python 3.13 documentation and 25 targeting foundational data science / machine learning with Python. Each case is designed to be answerable only from the specified sources and includes must-include tokens and common hallucinations to penalize, enabling reliable automated grading of retrieval and grounding quality.",
+  "schema_version": "rag_eval_case_v1",
+  "cases": [
+    {
+      "id": "PY01",
+      "topic": "python-3.13-comprehensions",
+      "difficulty": "Easy",
+      "question": "What is a list comprehension, and write one that yields the squares of 0–9?",
+      "expected_route": "docs",
+      "requires_citation": true,
+      "gold_answer": "A list comprehension is a concise syntax to create a new list by evaluating an expression for each item in an iterable (optionally filtering). Example: squares = [x**2 for x in range(10)]. Source: https://docs.python.org/3.13/tutorial/datastructures.html#list-comprehensions",
+      "must_include": [
+        "list comprehension",
+        "[x**2 for x in range(10)]"
+      ],
+      "forbidden": [
+        "generator expression",
+        "squares = (x**2 for x in range(10))"
+      ],
+      "metadata": {
+        "source_priority_expected": [
+          "docs"
+        ],
+        "notes": "Should cite the Python 3.13 tutorial section on list comprehensions."
+      }
+    },
+    {
+      "id": "PY02",
+      "topic": "python-3.13-comprehensions",
+      "difficulty": "Easy",
+      "question": "Write a list comprehension that returns only the even integers from 0–20 (inclusive).",
+      "expected_route": "docs",
+      "requires_citation": true,
+      "gold_answer": "Use an if-filter clause: evens = [x for x in range(21) if x % 2 == 0]. Source: https://docs.python.org/3.13/tutorial/datastructures.html#list-comprehensions",
+      "must_include": [
+        "[x for x in range(21) if x % 2 == 0]"
+      ],
+      "forbidden": [
+        "range(20)",
+        "x / 2 == 0"
+      ],
+      "metadata": {
+        "source_priority_expected": [
+          "docs"
+        ],
+        "notes": "Simple syntax/grounding check for comprehension + filter."
+      }
+    },
+    {
+      "id": "PY03",
+      "topic": "python-3.13-comprehensions",
+      "difficulty": "Easy",
+      "question": "Flatten a 2D list matrix = [[1, 2], [3, 4], [5, 6]] into [1,2,3,4,5,6] using a list comprehension.",
+      "expected_route": "docs",
+      "requires_citation": true,
+      "gold_answer": "One idiomatic nested comprehension is: flat = [x for row in matrix for x in row]. This corresponds to nested for-loops in the comprehension syntax. Source: https://docs.python.org/3.13/tutorial/datastructures.html#nested-list-comprehensions",
+      "must_include": [
+        "[x for row in matrix for x in row]"
+      ],
+      "forbidden": [
+        "itertools.chain",
+        "sum(matrix, [])"
+      ],
+      "metadata": {
+        "source_priority_expected": [
+          "docs"
+        ],
+        "notes": "Tests retrieval of nested comprehension pattern (not just generic Python memory)."
+      }
+    },
+    {
+      "id": "PY04",
+      "topic": "python-3.13-comprehensions",
+      "difficulty": "Easy",
+      "question": "Create a dict comprehension mapping each word to its length for words = [\"ml\", \"python\", \"rag\"].",
+      "expected_route": "docs",
+      "requires_citation": true,
+      "gold_answer": "A dict comprehension has the form {key_expr: value_expr for ...}. Example: lengths = {w: len(w) for w in words}. Source: https://docs.python.org/3.13/tutorial/datastructures.html#dictionaries",
+      "must_include": [
+        "{w: len(w) for w in words}"
+      ],
+      "forbidden": [
+        "dict(map(",
+        "len(words)"
+      ],
+      "metadata": {
+        "source_priority_expected": [
+          "docs"
+        ],
+        "notes": "Checks dict comprehension syntax and basic transformation."
+      }
+    },
+    {
+      "id": "PY05",
+      "topic": "python-3.13-comprehensions",
+      "difficulty": "Easy",
+      "question": "Create a set of unique word lengths from words = [\"aa\", \"bbb\", \"cc\", \"bbb\"] using a comprehension.",
+      "expected_route": "docs",
+      "requires_citation": true,
+      "gold_answer": "Use a set comprehension: unique_lengths = {len(w) for w in words}. Source: https://docs.python.org/3.13/reference/expressions.html#comprehensions",
+      "must_include": [
+        "{len(w) for w in words}"
+      ],
+      "forbidden": [
+        "[]",
+        "returns list"
+      ],
+      "metadata": {
+        "source_priority_expected": [
+          "docs"
+        ],
+        "notes": "Ensures the assistant distinguishes set vs list comprehensions."
+      }
+    },
+    {
+      "id": "PY06",
+      "topic": "python-3.13-expressions-generator-expr",
+      "difficulty": "Easy",
+      "question": "What is a generator expression, and how does it differ from a list comprehension in evaluation?",
+      "expected_route": "docs",
+      "requires_citation": true,
+      "gold_answer": "A generator expression creates a generator object that yields items lazily as you iterate, while a list comprehension eagerly builds a list. In generator expressions, the leftmost iterable is evaluated immediately when the generator expression is defined. Source: https://docs.python.org/3.13/reference/expressions.html#generator-expressions",
+      "must_include": [
+        "generator",
+        "lazily",
+        "list comprehension",
+        "eagerly",
+        "leftmost iterable"
+      ],
+      "forbidden": [
+        "generator expression returns a list",
+        "evaluates everything immediately"
+      ],
+      "metadata": {
+        "source_priority_expected": [
+          "docs"
+        ],
+        "notes": "Grounding check for generator-expression semantics (lazy vs eager + leftmost iterable timing)."
+      }
+    },
+    {
+      "id": "PY07",
+      "topic": "python-3.13-expressions-comprehension-scope",
+      "difficulty": "Easy",
+      "question": "Why does a variable assigned as the loop target inside a list comprehension not leak into the surrounding scope in Python 3.13?",
+      "expected_route": "docs",
+      "requires_citation": true,
+      "gold_answer": "Comprehensions run in an implicitly nested scope (distinct from the enclosing scope), which prevents loop-target assignments inside the comprehension from leaking outward (aside from the leftmost iterable being evaluated in the enclosing scope). Source: https://docs.python.org/3.13/reference/expressions.html#comprehensions",
+      "must_include": [
+        "implicitly nested scope",
+        "does not leak"
+      ],
+      "forbidden": [
+        "In Python 3.13 list comprehensions leak variables",
+        "same scope as enclosing"
+      ],
+      "metadata": {
+        "source_priority_expected": [
+          "docs"
+        ],
+        "notes": "Key RAG detail: the implicit nested scope rule is easy to hallucinate without retrieval."
+      }
+    },
+    {
+      "id": "PY08",
+      "topic": "python-3.13-expressions-comprehensions",
+      "difficulty": "Medium",
+      "question": "Are yield or yield from allowed inside list/set/dict comprehensions? Answer yes/no and why.",
+      "expected_route": "docs",
+      "requires_citation": true,
+      "gold_answer": "No. yield and yield from are prohibited inside the implicitly nested scope used for comprehensions (and generator expressions). Source: https://docs.python.org/3.13/reference/expressions.html#comprehensions",
+      "must_include": [
+        "No",
+        "yield",
+        "yield from",
+        "prohibited"
+      ],
+      "forbidden": [
+        "Yes, you can yield inside a list comprehension"
+      ],
+      "metadata": {
+        "source_priority_expected": [
+          "docs"
+        ],
+        "notes": "Hard rule enforcement: many models hallucinate yield-in-comprehension."
+      }
+    },
+    {
+      "id": "PY09",
+      "topic": "python-3.13-expressions-dict-display",
+      "difficulty": "Medium",
+      "question": "In a dict literal with duplicate keys, which value wins? Example: {'a': 1, 'a': 2}.",
+      "expected_route": "docs",
+      "requires_citation": true,
+      "gold_answer": "In a dict display, items are evaluated left-to-right; if the same key appears multiple times, the last value given for that key is the one kept. Example result: {'a': 2}. Source: https://docs.python.org/3.13/reference/expressions.html#dictionary-displays",
+      "must_include": [
+        "left-to-right",
+        "last value"
+      ],
+      "forbidden": [
+        "first value wins",
+        "raises an error on duplicate keys"
+      ],
+      "metadata": {
+        "source_priority_expected": [
+          "docs"
+        ],
+        "notes": "Targets a precise language rule from the expressions reference."
+      }
+    },
+    {
+      "id": "PY10",
+      "topic": "python-3.13-expressions-set-display",
+      "difficulty": "Medium",
+      "question": "Why does {} not create an empty set in Python, and how do you create an empty set?",
+      "expected_route": "docs",
+      "requires_citation": true,
+      "gold_answer": "{} is the literal for an empty dictionary; there is no empty-set literal. To create an empty set, use set(). Source: https://docs.python.org/3.13/reference/expressions.html#set-displays",
+      "must_include": [
+        "{} is",
+        "empty dictionary",
+        "set()"
+      ],
+      "forbidden": [
+        "{} makes an empty set"
+      ],
+      "metadata": {
+        "source_priority_expected": [
+          "docs"
+        ],
+        "notes": "Classic gotcha; should be grounded in Python reference."
+      }
+    },
+    {
+      "id": "PY11",
+      "topic": "python-3.13-expressions-dict-unpacking",
+      "difficulty": "Medium",
+      "question": "In a dict display using unpacking, which values take precedence: earlier entries or later **unpackings?",
+      "expected_route": "docs",
+      "requires_citation": true,
+      "gold_answer": "In a dict display, later items override earlier ones. This includes later **mapping unpackings: if the same key appears multiple times, the definition that occurs later in the display wins. Source: https://docs.python.org/3.13/reference/expressions.html#dictionary-displays",
+      "must_include": [
+        "**",
+        "later",
+        "override"
+      ],
+      "forbidden": [
+        "earlier wins",
+        "unpacking keeps first occurrence"
+      ],
+      "metadata": {
+        "source_priority_expected": [
+          "docs"
+        ],
+        "notes": "Ensures correct merge semantics with ** in dict displays."
+      }
+    },
+    {
+      "id": "PY12",
+      "topic": "python-3.13-builtins-locals",
+      "difficulty": "Medium",
+      "question": "What does locals() return (high level) in Python 3.13?",
+      "expected_route": "docs",
+      "requires_citation": true,
+      "gold_answer": "locals() returns a mapping representing the current local symbol table (names mapped to the values currently bound in that local scope). Source: https://docs.python.org/3.13/library/functions.html#locals",
+      "must_include": [
+        "mapping",
+        "local symbol table"
+      ],
+      "forbidden": [
+        "locals() returns globals()",
+        "locals() always returns a write-through proxy"
+      ],
+      "metadata": {
+        "source_priority_expected": [
+          "docs"
+        ],
+        "notes": "Baseline definition needed before testing 3.13 semantic changes."
+      }
+    },
+    {
+      "id": "PY13",
+      "topic": "python-3.13-builtins-locals-pep667",
+      "difficulty": "Medium",
+      "question": "What changed in Python 3.13 about the semantics of mutating the mapping returned by locals() inside functions (optimized scopes)?",
+      "expected_route": "docs",
+      "requires_citation": true,
+      "gold_answer": "Python 3.13 defines locals() behavior via PEP 667: in optimized scopes (functions/generators/coroutines), each call to locals() returns an independent snapshot dict; mutating it does not write back to real local variables. Source: https://docs.python.org/3.13/library/functions.html#locals and https://peps.python.org/pep-0667/",
+      "must_include": [
+        "optimized scopes",
+        "snapshot",
+        "does not write back",
+        "PEP 667"
+      ],
+      "forbidden": [
+        "mutating locals() inside a function updates local variables",
+        "locals() returns the same dict object inside a function"
+      ],
+      "metadata": {
+        "source_priority_expected": [
+          "docs"
+        ],
+        "notes": "High-value anti-hallucination check (PEP 667)."
+      }
+    },
+    {
+      "id": "PY14",
+      "topic": "python-3.13-builtins-locals",
+      "difficulty": "Medium",
+      "question": "How does locals() behave at module scope in Python 3.13 (same object vs snapshots)?",
+      "expected_route": "docs",
+      "requires_citation": true,
+      "gold_answer": "In module scope (and other non-optimized scopes), locals() provides direct access to the current namespace mapping; repeated calls return the same mapping object and changes reflect in that namespace. Source: https://docs.python.org/3.13/library/functions.html#locals",
+      "must_include": [
+        "module scope",
+        "same mapping object"
+      ],
+      "forbidden": [
+        "module-scope locals() always returns a copy",
+        "module-scope locals() is read-only snapshot"
+      ],
+      "metadata": {
+        "source_priority_expected": [
+          "docs"
+        ],
+        "notes": "Separates module-scope behavior from optimized-scope snapshot behavior."
+      }
+    },
+    {
+      "id": "PY15",
+      "topic": "python-3.13-builtins-exec-locals",
+      "difficulty": "Medium",
+      "question": "What does the Python docs recommend if you need to see changes from exec() reflected after it returns?",
+      "expected_route": "docs",
+      "requires_citation": true,
+      "gold_answer": "Pass an explicit locals mapping to exec() (rather than relying on default locals), because default locals follow locals() semantics and may not reflect updates to real locals in optimized scopes. Source: https://docs.python.org/3.13/library/functions.html#exec and https://docs.python.org/3.13/library/functions.html#locals",
+      "must_include": [
+        "explicit",
+        "locals mapping",
+        "exec"
+      ],
+      "forbidden": [
+        "exec() always updates local variables inside functions"
+      ],
+      "metadata": {
+        "source_priority_expected": [
+          "docs"
+        ],
+        "notes": "Checks grounded guidance about exec/locals interactions in 3.13."
+      }
+    },
+    {
+      "id": "PY16",
+      "topic": "python-3.13-whatsnew",
+      "difficulty": "Medium",
+      "question": "When was Python 3.13 released, and name two 'Release Highlights' mentioned in the official What's New document.",
+      "expected_route": "docs",
+      "requires_citation": true,
+      "gold_answer": "Python 3.13 was released on October 7, 2024. Release highlights include experimental free-threaded builds (PEP 703, GIL disabled mode) and a basic JIT compiler (PEP 744), among others. Source: https://docs.python.org/3/whatsnew/3.13.html",
+      "must_include": [
+        "October 7, 2024",
+        "PEP 703",
+        "free-threaded",
+        "PEP 744",
+        "JIT"
+      ],
+      "forbidden": [
+        "released in 2023",
+        "PEP 659",
+        "Python 3.13 introduced async/await"
+      ],
+      "metadata": {
+        "source_priority_expected": [
+          "docs"
+        ],
+        "notes": "Tests retrieval of specific 3.13 release facts (date + highlighted PEPs)."
+      }
+    },
+    {
+      "id": "PY17",
+      "topic": "python-3.13-whatsnew",
+      "difficulty": "Medium",
+      "question": "Which environment variables are mentioned for controlling color support in Python 3.13 output/tracebacks?",
+      "expected_route": "docs",
+      "requires_citation": true,
+      "gold_answer": "The Python 3.13 What's New document mentions PYTHON_COLORS and the NO_COLOR convention as mechanisms related to controlling/disabling color output. Source: https://docs.python.org/3/whatsnew/3.13.html",
+      "must_include": [
+        "PYTHON_COLORS",
+        "NO_COLOR"
+      ],
+      "forbidden": [
+        "PYTHONCOLOR",
+        "TERM_COLORS_ONLY"
+      ],
+      "metadata": {
+        "source_priority_expected": [
+          "docs"
+        ],
+        "notes": "Forces grounded recall of the exact environment variable names."
+      }
+    },
+    {
+      "id": "PY18",
+      "topic": "python-3.13-graphlib-topologicalsorter",
+      "difficulty": "Hard",
+      "question": "What condition must a dependency graph satisfy for a complete topological ordering to exist (as used by graphlib.TopologicalSorter)?",
+      "expected_route": "docs",
+      "requires_citation": true,
+      "gold_answer": "A complete topological ordering exists only if the directed dependency graph is acyclic (a DAG). If there are directed cycles, TopologicalSorter cannot produce a full order and prepare() raises CycleError. Source: https://docs.python.org/3.13/library/graphlib.html",
+      "must_include": [
+        "acyclic",
+        "DAG",
+        "CycleError"
+      ],
+      "forbidden": [
+        "topological sort works with cycles",
+        "graph must be connected"
+      ],
+      "metadata": {
+        "source_priority_expected": [
+          "docs"
+        ],
+        "notes": "Matches your 'difficult Python' target: acyclic dependency handling."
+      }
+    },
+    {
+      "id": "PY19",
+      "topic": "python-3.13-graphlib-topologicalsorter",
+      "difficulty": "Hard",
+      "question": "Describe the canonical TopologicalSorter workflow for processing nodes as they become ready (API calls in order).",
+      "expected_route": "docs",
+      "requires_citation": true,
+      "gold_answer": "Typical workflow: ts = TopologicalSorter(graph); ts.prepare(); while ts.is_active(): ready = ts.get_ready(); ...process each node...; ts.done(node) for completed nodes. This enables incremental scheduling based on dependencies. Source: https://docs.python.org/3.13/library/graphlib.html#graphlib.TopologicalSorter",
+      "must_include": [
+        "TopologicalSorter",
+        "prepare()",
+        "get_ready()",
+        "done(",
+        "is_active()"
+      ],
+      "forbidden": [
+        "start()",
+        "mark_done()",
+        "get_next()"
+      ],
+      "metadata": {
+        "source_priority_expected": [
+          "docs"
+        ],
+        "notes": "Checks exact method names and intended order of use."
+      }
+    },
+    {
+      "id": "PY20",
+      "topic": "python-3.13-graphlib-topologicalsorter",
+      "difficulty": "Hard",
+      "question": "What does TopologicalSorter.static_order() do, and when is it appropriate?",
+      "expected_route": "docs",
+      "requires_citation": true,
+      "gold_answer": "static_order() is a convenience iterator that yields nodes in a topological order (internally doing the prepare/get_ready/done progression) when you just need a complete ordering for a DAG rather than incremental 'ready set' scheduling. Source: https://docs.python.org/3.13/library/graphlib.html#graphlib.TopologicalSorter.static_order",
+      "must_include": [
+        "static_order()",
+        "iterator",
+        "topological order"
+      ],
+      "forbidden": [
+        "returns only ready nodes without completing",
+        "works even if prepare() fails but still returns full order"
+      ],
+      "metadata": {
+        "source_priority_expected": [
+          "docs"
+        ],
+        "notes": "Ensures the assistant knows static_order() vs incremental mode."
+      }
+    },
+    {
+      "id": "PY21",
+      "topic": "python-3.13-graphlib-cycleerror",
+      "difficulty": "Hard",
+      "question": "How do you access the detected cycle details from graphlib.CycleError, and what is the shape of that cycle list?",
+      "expected_route": "docs",
+      "requires_citation": true,
+      "gold_answer": "CycleError (raised by prepare()) stores the detected cycle in the second element of the exception's args (e.args[1]). It is a list of nodes where each node is an immediate predecessor of the next, and the first and last node are the same to show the cycle. Source: https://docs.python.org/3.13/library/graphlib.html#graphlib.CycleError",
+      "must_include": [
+        "CycleError",
+        "args",
+        "second element",
+        "first and last node are the same"
+      ],
+      "forbidden": [
+        "cycle stored in e.cycle",
+        "args[0] is the cycle list"
+      ],
+      "metadata": {
+        "source_priority_expected": [
+          "docs"
+        ],
+        "notes": "Very specific contract; good for grounding fidelity."
+      }
+    },
+    {
+      "id": "PY22",
+      "topic": "python-3.13-graphlib-topologicalsorter",
+      "difficulty": "Hard",
+      "question": "If prepare() raises CycleError, how can you still process as many nodes as possible (conceptually) with TopologicalSorter?",
+      "expected_route": "docs",
+      "requires_citation": true,
+      "gold_answer": "Catch CycleError from prepare(); you can still call get_ready() to obtain any nodes not blocked by cycles and call done(...) as you process them, but progress will eventually stall once only cyclic/unresolvable dependencies remain. Source: https://docs.python.org/3.13/library/graphlib.html",
+      "must_include": [
+        "CycleError",
+        "get_ready()",
+        "done("
+      ],
+      "forbidden": [
+        "prepare() must succeed or you cannot call get_ready()",
+        "TopologicalSorter automatically breaks cycles"
+      ],
+      "metadata": {
+        "source_priority_expected": [
+          "docs"
+        ],
+        "notes": "Targets 'partial progress' behavior around cycles."
+      }
+    },
+    {
+      "id": "PY23",
+      "topic": "python-3.13-graphlib-topologicalsorter",
+      "difficulty": "Hard",
+      "question": "How do you add nodes and their predecessors using TopologicalSorter.add(), and what does the constructor's graph mapping represent?",
+      "expected_route": "docs",
+      "requires_citation": true,
+      "gold_answer": "Use ts.add(node, *predecessors) where the additional positional arguments are that node's immediate predecessors. The constructor graph mapping represents each node mapped to an iterable of its predecessors. Source: https://docs.python.org/3.13/library/graphlib.html#graphlib.TopologicalSorter.add",
+      "must_include": [
+        "add(node",
+        "predecessors",
+        "mapping",
+        "node",
+        "predecessors"
+      ],
+      "forbidden": [
+        "add(predecessor, node)",
+        "graph mapping is node -> successors"
+      ],
+      "metadata": {
+        "source_priority_expected": [
+          "docs"
+        ],
+        "notes": "Common source of errors: predecessor vs successor direction."
+      }
+    },
+    {
+      "id": "PY24",
+      "topic": "python-3.13-expressions-comprehension-eval-order",
+      "difficulty": "Hard",
+      "question": "In a comprehension, where is the iterable in the leftmost for-clause evaluated, and why does that matter for variable resolution?",
+      "expected_route": "docs",
+      "requires_citation": true,
+      "gold_answer": "In comprehensions, the iterable expression in the leftmost for-clause is evaluated in the enclosing scope before the implicitly nested comprehension scope is entered; later for-clauses/filters may depend on earlier loop variables, so they are evaluated within the nested scope instead. Source: https://docs.python.org/3.13/reference/expressions.html#comprehensions",
+      "must_include": [
+        "leftmost iterable",
+        "enclosing scope",
+        "implicitly nested scope"
+      ],
+      "forbidden": [
+        "all parts of the comprehension evaluate in the enclosing scope"
+      ],
+      "metadata": {
+        "source_priority_expected": [
+          "docs"
+        ],
+        "notes": "Tests subtle evaluation-order semantics (frequent hallucination point)."
+      }
+    },
+    {
+      "id": "PY25",
+      "topic": "python-3.13-graphlib-topologicalsorter",
+      "difficulty": "Hard",
+      "question": "Give a short Python example using TopologicalSorter to order an acyclic build DAG: fetch -> compile -> build.",
+      "expected_route": "docs",
+      "requires_citation": true,
+      "gold_answer": "Example: from graphlib import TopologicalSorter; ts = TopologicalSorter({'fetch': (), 'compile': ('fetch',), 'build': ('compile',)}); order = list(ts.static_order()); # order is a valid topo order such as ['fetch','compile','build']. Source: https://docs.python.org/3.13/library/graphlib.html",
+      "must_include": [
+        "TopologicalSorter",
+        "static_order",
+        "'build'",
+        "'compile'",
+        "'fetch'"
+      ],
+      "forbidden": [
+        "graph mapping uses successors",
+        "CycleError expected for this DAG"
+      ],
+      "metadata": {
+        "source_priority_expected": [
+          "docs"
+        ],
+        "notes": "Concrete DAG ordering check; also validates correct edge direction (node -> predecessors)."
+      }
+    },
+    {
+      "id": "DS01",
+      "topic": "ml-perceptron-raschka-ch02",
+      "difficulty": "Easy",
+      "question": "In Raschka's Perceptron implementation, what is the net input formula (code-level)?",
+      "expected_route": "github",
+      "requires_citation": true,
+      "gold_answer": "net_input returns np.dot(X, self.w_[1:]) + self.w_[0] (dot product of features with weights plus bias at index 0). Source: https://raw.githubusercontent.com/rasbt/python-machine-learning-book-3rd-edition/master/ch02/ch02.py",
+      "must_include": [
+        "np.dot",
+        "self.w_[1:]",
+        "self.w_[0]"
+      ],
+      "forbidden": [
+        "sigmoid",
+        "softmax",
+        "X @ self.w_ (with wrong bias handling)"
+      ],
+      "metadata": {
+        "source_priority_expected": [
+          "github"
+        ],
+        "notes": "Directly grounded in Raschka ch02.py Perceptron.net_input."
+      }
+    },
+    {
+      "id": "DS02",
+      "topic": "ml-perceptron-raschka-ch02",
+      "difficulty": "Easy",
+      "question": "In Raschka's Perceptron, what is the prediction rule (threshold) used in predict()?",
+      "expected_route": "github",
+      "requires_citation": true,
+      "gold_answer": "predict applies a unit step at 0.0: return np.where(self.net_input(X) >= 0.0, 1, -1). Source: https://raw.githubusercontent.com/rasbt/python-machine-learning-book-3rd-edition/master/ch02/ch02.py",
+      "must_include": [
+        "np.where",
+        ">= 0.0",
+        "1",
+        "-1"
+      ],
+      "forbidden": [
+        "0/1 labels only",
+        "predict uses probabilities"
+      ],
+      "metadata": {
+        "source_priority_expected": [
+          "github"
+        ],
+        "notes": "Checks for exact label convention (1/-1) and threshold location."
+      }
+    },
+    {
+      "id": "DS03",
+      "topic": "ml-perceptron-raschka-ch02",
+      "difficulty": "Easy",
+      "question": "How are Perceptron weights initialized in Raschka's fit() (distribution and shape)?",
+      "expected_route": "github",
+      "requires_citation": true,
+      "gold_answer": "Weights are initialized with a NumPy RandomState normal distribution: self.w_ = rgen.normal(loc=0.0, scale=0.01, size=1 + X.shape[1]) (bias + one weight per feature). Source: https://raw.githubusercontent.com/rasbt/python-machine-learning-book-3rd-edition/master/ch02/ch02.py",
+      "must_include": [
+        "normal",
+        "loc=0.0",
+        "scale=0.01",
+        "size=1 + X.shape[1]"
+      ],
+      "forbidden": [
+        "all zeros",
+        "uniform(0,1)",
+        "size=X.shape[1] (missing bias)"
+      ],
+      "metadata": {
+        "source_priority_expected": [
+          "github"
+        ],
+        "notes": "Specific init parameters discourage guessing."
+      }
+    },
+    {
+      "id": "DS04",
+      "topic": "ml-perceptron-raschka-ch02",
+      "difficulty": "Easy",
+      "question": "What is the Perceptron weight update rule used per training example in Raschka's code?",
+      "expected_route": "github",
+      "requires_citation": true,
+      "gold_answer": "Per sample: update = eta * (target - predict(xi)); then w_[1:] += update * xi and w_[0] += update. Source: https://raw.githubusercontent.com/rasbt/python-machine-learning-book-3rd-edition/master/ch02/ch02.py",
+      "must_include": [
+        "update = self.eta * (target - self.predict(xi))",
+        "self.w_[1:] += update * xi",
+        "self.w_[0] += update"
+      ],
+      "forbidden": [
+        "gradient of MSE",
+        "w -= eta * grad",
+        "no bias update"
+      ],
+      "metadata": {
+        "source_priority_expected": [
+          "github"
+        ],
+        "notes": "Matches the exact line-level update logic."
+      }
+    },
+    {
+      "id": "DS05",
+      "topic": "ml-perceptron-raschka-ch02",
+      "difficulty": "Easy",
+      "question": "What does Perceptron.errors_ track in Raschka's implementation?",
+      "expected_route": "github",
+      "requires_citation": true,
+      "gold_answer": "errors_ records the number of updates (misclassifications) in each epoch: errors is incremented by int(update != 0.0) for each sample, and appended once per epoch. Source: https://raw.githubusercontent.com/rasbt/python-machine-learning-book-3rd-edition/master/ch02/ch02.py",
+      "must_include": [
+        "errors_",
+        "int(update != 0.0)",
+        "each epoch"
+      ],
+      "forbidden": [
+        "tracks loss value",
+        "tracks accuracy",
+        "appended per sample"
+      ],
+      "metadata": {
+        "source_priority_expected": [
+          "github"
+        ],
+        "notes": "Tests understanding of training diagnostics in the reference implementation."
+      }
+    },
+    {
+      "id": "DS06",
+      "topic": "ml-linear-regression-vanderplas",
+      "difficulty": "Easy",
+      "question": "In the book excerpt, what is the standard simple linear regression model form and what do its parameters represent?",
+      "expected_route": "docs",
+      "requires_citation": true,
+      "gold_answer": "A straight-line fit is y = a x + b, where a is the slope and b is the intercept. Source: https://jakevdp.github.io/PythonDataScienceHandbook/05.06-linear-regression.html",
+      "must_include": [
+        "y = a",
+        "slope",
+        "intercept"
+      ],
+      "forbidden": [
+        "y = ax^2 + b",
+        "a is intercept"
+      ],
+      "metadata": {
+        "source_priority_expected": [
+          "docs"
+        ],
+        "notes": "Foundational regression definition from VanderPlas."
+      }
+    },
+    {
+      "id": "DS07",
+      "topic": "ml-linear-regression-vanderplas",
+      "difficulty": "Easy",
+      "question": "After fitting sklearn.linear_model.LinearRegression, where do you read the learned slope(s) and intercept?",
+      "expected_route": "docs",
+      "requires_citation": true,
+      "gold_answer": "In scikit-learn, learned parameters use a trailing underscore. For LinearRegression, coefficients are in model.coef_ and the intercept is in model.intercept_. Source: https://jakevdp.github.io/PythonDataScienceHandbook/05.06-linear-regression.html",
+      "must_include": [
+        "coef_",
+        "intercept_",
+        "trailing underscore"
+      ],
+      "forbidden": [
+        "coef (no underscore)",
+        "weights_",
+        "bias_"
+      ],
+      "metadata": {
+        "source_priority_expected": [
+          "docs"
+        ],
+        "notes": "Checks scikit-learn estimator attribute conventions as stated in the book."
+      }
+    },
+    {
+      "id": "DS08",
+      "topic": "ml-basis-expansion-vanderplas",
+      "difficulty": "Medium",
+      "question": "What is 'basis function regression' as described in VanderPlas, and why can it fit nonlinear patterns while remaining a linear model?",
+      "expected_route": "docs",
+      "requires_citation": true,
+      "gold_answer": "Basis function regression replaces inputs with transformed features x_n = f_n(x) (e.g., powers or other bases). The model is still linear in its coefficients (a linear combination of transformed features), but nonlinear patterns can be represented in the original input space. Source: https://jakevdp.github.io/PythonDataScienceHandbook/05.06-linear-regression.html",
+      "must_include": [
+        "basis function",
+        "x_n = f_n(x)",
+        "linear in coefficients"
+      ],
+      "forbidden": [
+        "changes the optimizer to nonlinear",
+        "requires neural networks"
+      ],
+      "metadata": {
+        "source_priority_expected": [
+          "docs"
+        ],
+        "notes": "Conceptual grounding for feature expansion in linear models."
+      }
+    },
+    {
+      "id": "DS09",
+      "topic": "ml-polynomialfeatures-vanderplas",
+      "difficulty": "Medium",
+      "question": "How does PolynomialFeatures(degree=3, include_bias=False) conceptually transform a single input feature x?",
+      "expected_route": "docs",
+      "requires_citation": true,
+      "gold_answer": "It expands x into polynomial feature columns up to degree 3 without adding a bias column: [x, x^2, x^3]. Source: https://jakevdp.github.io/PythonDataScienceHandbook/05.06-linear-regression.html",
+      "must_include": [
+        "PolynomialFeatures",
+        "include_bias=False",
+        "[x, x^2, x^3]"
+      ],
+      "forbidden": [
+        "adds only x^3",
+        "always includes a bias column when include_bias=False"
+      ],
+      "metadata": {
+        "source_priority_expected": [
+          "docs"
+        ],
+        "notes": "Tests factual recall of the feature expansion described in the linear regression chapter."
+      }
+    },
+    {
+      "id": "DS10",
+      "topic": "ml-pipelines-vanderplas",
+      "difficulty": "Medium",
+      "question": "Why does VanderPlas recommend using a scikit-learn pipeline for polynomial regression, and what is the canonical pattern?",
+      "expected_route": "docs",
+      "requires_citation": true,
+      "gold_answer": "A pipeline cleanly chains a transformer with an estimator into a single fit/predict interface. Canonical pattern: make_pipeline(PolynomialFeatures(degree), LinearRegression()). Source: https://jakevdp.github.io/PythonDataScienceHandbook/05.06-linear-regression.html",
+      "must_include": [
+        "pipeline",
+        "make_pipeline",
+        "PolynomialFeatures",
+        "LinearRegression"
+      ],
+      "forbidden": [
+        "fit transformer separately is required",
+        "Pipeline is only for scaling"
+      ],
+      "metadata": {
+        "source_priority_expected": [
+          "docs"
+        ],
+        "notes": "Verifies retrieval of the recommended pipeline idiom from the book."
+      }
+    },
+    {
+      "id": "DS11",
+      "topic": "ml-gaussianfeatures-vanderplas",
+      "difficulty": "Medium",
+      "question": "In the GaussianFeatures transformer example, what does fit() compute for centers_ and width_ (high level)?",
+      "expected_route": "docs",
+      "requires_citation": true,
+      "gold_answer": "fit() sets centers_ to evenly spaced values across the data range (linspace between X.min() and X.max()) and sets width_ based on the spacing times width_factor. Source: https://jakevdp.github.io/PythonDataScienceHandbook/05.06-linear-regression.html",
+      "must_include": [
+        "centers_",
+        "linspace",
+        "X.min()",
+        "X.max()",
+        "width_"
+      ],
+      "forbidden": [
+        "centers_ from k-means",
+        "width_ fixed to 1.0"
+      ],
+      "metadata": {
+        "source_priority_expected": [
+          "docs"
+        ],
+        "notes": "Targets the specific learned attributes of the custom transformer."
+      }
+    },
+    {
+      "id": "DS12",
+      "topic": "ml-regularization-vanderplas",
+      "difficulty": "Medium",
+      "question": "State the ridge regression (L2) penalty term P as written in the book, and name the hyperparameter controlling it.",
+      "expected_route": "docs",
+      "requires_citation": true,
+      "gold_answer": "Ridge adds an L2 penalty P = α ∑_{n=1..N} θ_n^2, controlled by the hyperparameter α (alpha). Source: https://jakevdp.github.io/PythonDataScienceHandbook/05.06-linear-regression.html",
+      "must_include": [
+        "P = α",
+        "θ_n^2",
+        "alpha"
+      ],
+      "forbidden": [
+        "L1 penalty",
+        "P = α ∑ |θ_n|"
+      ],
+      "metadata": {
+        "source_priority_expected": [
+          "docs"
+        ],
+        "notes": "Precise formula check—good for grounding evaluation."
+      }
+    },
+    {
+      "id": "DS13",
+      "topic": "ml-regularization-vanderplas",
+      "difficulty": "Medium",
+      "question": "State the lasso regression (L1) penalty term P as written in the book, and give the common effect on coefficients.",
+      "expected_route": "docs",
+      "requires_citation": true,
+      "gold_answer": "Lasso adds an L1 penalty P = α ∑_{n=1..N} |θ_n|, which tends to yield sparse solutions (many coefficients driven to exactly zero). Source: https://jakevdp.github.io/PythonDataScienceHandbook/05.06-linear-regression.html",
+      "must_include": [
+        "P = α",
+        "|θ_n|",
+        "sparse",
+        "zero"
+      ],
+      "forbidden": [
+        "L2 penalty",
+        "does not affect sparsity"
+      ],
+      "metadata": {
+        "source_priority_expected": [
+          "docs"
+        ],
+        "notes": "Checks both the exact formula and the qualitative sparsity effect."
+      }
+    },
+    {
+      "id": "DS14",
+      "topic": "ml-model-validation-vanderplas",
+      "difficulty": "Medium",
+      "question": "In VanderPlas' 'model validation the wrong way' demo, what is the fundamental flaw and why can it give 100% accuracy for 1-NN on Iris?",
+      "expected_route": "docs",
+      "requires_citation": true,
+      "gold_answer": "The flaw is training and evaluating on the same data. A 1-nearest-neighbor classifier is instance-based and effectively memorizes training points, so predicting on X used for training can yield 100% accuracy in typical cases. Source: https://jakevdp.github.io/PythonDataScienceHandbook/05.03-hyperparameters-and-model-validation.html",
+      "must_include": [
+        "trains and evaluates on the same data",
+        "instance-based",
+        "nearest neighbor",
+        "100% accuracy"
+      ],
+      "forbidden": [
+        "data leakage due to scaling only",
+        "accuracy_score is broken"
+      ],
+      "metadata": {
+        "source_priority_expected": [
+          "docs"
+        ],
+        "notes": "Designed to catch generic answers: must mention same-data evaluation + instance-based behavior."
+      }
+    },
+    {
+      "id": "DS15",
+      "topic": "ml-holdout-validation-vanderplas",
+      "difficulty": "Medium",
+      "question": "Which scikit-learn utility is used to create a holdout set in the book's example, and what split proportion is shown?",
+      "expected_route": "docs",
+      "requires_citation": true,
+      "gold_answer": "The example uses train_test_split to split the dataset, with train_size=0.5 (50% in each set) and random_state=0 in the shown code. Source: https://jakevdp.github.io/PythonDataScienceHandbook/05.03-hyperparameters-and-model-validation.html",
+      "must_include": [
+        "train_test_split",
+        "train_size=0.5",
+        "random_state=0"
+      ],
+      "forbidden": [
+        "KFold",
+        "test_size=0.2",
+        "random_state=42"
+      ],
+      "metadata": {
+        "source_priority_expected": [
+          "docs"
+        ],
+        "notes": "Tests retrieval of the specific parameters used in the holdout example."
+      }
+    },
+    {
+      "id": "DS16",
+      "topic": "ml-cross-validation-vanderplas",
+      "difficulty": "Medium",
+      "question": "How does the book demonstrate 5-fold cross-validation succinctly, and what does it return?",
+      "expected_route": "docs",
+      "requires_citation": true,
+      "gold_answer": "It uses Scikit-Learn's cross_val_score convenience routine, e.g., cross_val_score(model, X, y, cv=5), which returns an array of scores (one per fold). Source: https://jakevdp.github.io/PythonDataScienceHandbook/05.03-hyperparameters-and-model-validation.html",
+      "must_include": [
+        "cross_val_score",
+        "cv=5",
+        "array"
+      ],
+      "forbidden": [
+        "GridSearchCV",
+        "returns a single scalar only"
+      ],
+      "metadata": {
+        "source_priority_expected": [
+          "docs"
+        ],
+        "notes": "Grounding check for the specific cross-validation API used in the text."
+      }
+    },
+    {
+      "id": "DS17",
+      "topic": "ml-adaline-gd-raschka-ch02",
+      "difficulty": "Medium",
+      "question": "In Raschka's AdalineGD, what is the vectorized weight update step for w_[1:] and the bias w_[0]?",
+      "expected_route": "github",
+      "requires_citation": true,
+      "gold_answer": "AdalineGD updates with errors = (y - output) and then: w_[1:] += eta * X.T.dot(errors); w_[0] += eta * errors.sum(). Source: https://raw.githubusercontent.com/rasbt/python-machine-learning-book-3rd-edition/master/ch02/ch02.py",
+      "must_include": [
+        "X.T.dot(errors)",
+        "errors.sum()",
+        "w_[1:]",
+        "w_[0]"
+      ],
+      "forbidden": [
+        "loops per sample (SGD)",
+        "w -= eta * grad with missing sums"
+      ],
+      "metadata": {
+        "source_priority_expected": [
+          "github"
+        ],
+        "notes": "Tests exact vectorized GD update in the reference implementation."
+      }
+    },
+    {
+      "id": "DS18",
+      "topic": "ml-adaline-sgd-raschka-ch02",
+      "difficulty": "Hard",
+      "question": "In Raschka's AdalineSGD, what is the per-sample weight update rule implemented in _update_weights()?",
+      "expected_route": "github",
+      "requires_citation": true,
+      "gold_answer": "Per sample: output = activation(net_input(xi)); error = (target - output); then w_[1:] += eta * xi.dot(error) and w_[0] += eta * error; cost = 0.5 * error**2. Source: https://raw.githubusercontent.com/rasbt/python-machine-learning-book-3rd-edition/master/ch02/ch02.py",
+      "must_include": [
+        "_update_weights",
+        "error = (target - output)",
+        "xi.dot(error)",
+        "0.5 * error**2"
+      ],
+      "forbidden": [
+        "cross-entropy loss",
+        "uses gradient of sigmoid",
+        "updates only bias"
+      ],
+      "metadata": {
+        "source_priority_expected": [
+          "github"
+        ],
+        "notes": "Harder: requires correct details for SGD update + cost."
+      }
+    },
+    {
+      "id": "DS19",
+      "topic": "ml-adaline-sgd-raschka-ch02",
+      "difficulty": "Hard",
+      "question": "What is the purpose of shuffling in AdalineSGD.fit(), and how is the shuffle implemented in _shuffle()?",
+      "expected_route": "github",
+      "requires_citation": true,
+      "gold_answer": "Shuffling each epoch helps prevent cycles/order effects. _shuffle() uses a permutation of indices (rgen.permutation(len(y))) and returns X[r], y[r]. Source: https://raw.githubusercontent.com/rasbt/python-machine-learning-book-3rd-edition/master/ch02/ch02.py",
+      "must_include": [
+        "shuffle",
+        "prevent cycles",
+        "permutation",
+        "X[r], y[r]"
+      ],
+      "forbidden": [
+        "shuffle is for stratification",
+        "uses sklearn.utils.shuffle only"
+      ],
+      "metadata": {
+        "source_priority_expected": [
+          "github"
+        ],
+        "notes": "Checks both motivation + concrete mechanism (permutation indexing)."
+      }
+    },
+    {
+      "id": "DS20",
+      "topic": "ml-adaline-sgd-raschka-ch02",
+      "difficulty": "Hard",
+      "question": "What does AdalineSGD.partial_fit() do compared to fit(), and when does it initialize weights?",
+      "expected_route": "github",
+      "requires_citation": true,
+      "gold_answer": "partial_fit updates weights without reinitializing them; if weights are not initialized yet (not w_initialized), it calls _initialize_weights. It then updates weights for each xi/target (or a single sample). Source: https://raw.githubusercontent.com/rasbt/python-machine-learning-book-3rd-edition/master/ch02/ch02.py",
+      "must_include": [
+        "partial_fit",
+        "without reinitializing",
+        "w_initialized",
+        "_initialize_weights"
+      ],
+      "forbidden": [
+        "reinitializes weights every call",
+        "only works for batches and not single samples"
+      ],
+      "metadata": {
+        "source_priority_expected": [
+          "github"
+        ],
+        "notes": "Important for online/streaming learning evaluation."
+      }
+    },
+    {
+      "id": "DS21",
+      "topic": "ml-optimization-mini-batch-sgd",
+      "difficulty": "Hard",
+      "question": "Write a NumPy mini-batch SGD weight update for a linear model like Adaline that is vectorized over a batch. Optimize for performance (avoid Python loops over samples).",
+      "expected_route": "github",
+      "requires_citation": true,
+      "gold_answer": "One vectorized mini-batch update (w includes bias w0 separately):\nGiven Xb shape (B,d), yb shape (B,), w shape (d,), b scalar:\npred = Xb @ w + b; errors = (yb - pred);\nw += eta * (Xb.T @ errors); b += eta * errors.sum();\nOptionally scale by B (use mean) depending on your cost definition.\nThis generalizes the vectorized AdalineGD update (X.T.dot(errors)) to batches and matches the per-sample AdalineSGD idea while staying vectorized. Source for batch-style update pattern: https://raw.githubusercontent.com/rasbt/python-machine-learning-book-3rd-edition/master/ch02/ch02.py",
+      "must_include": [
+        "Xb.T @ errors",
+        "pred = Xb @ w + b",
+        "vectorized",
+        "avoid Python loops"
+      ],
+      "forbidden": [
+        "for xi in Xb",
+        "autograd",
+        "PyTorch optimizer.step()"
+      ],
+      "metadata": {
+        "source_priority_expected": [
+          "github"
+        ],
+        "notes": "Deliberately hard; grading can check for vectorized matrix products + correct error sign and bias update."
+      }
+    },
+    {
+      "id": "DS22",
+      "topic": "ml-feature-scaling-raschka-ch02",
+      "difficulty": "Hard",
+      "question": "How does Raschka standardize the two Iris features before training Adaline (exact formula used)?",
+      "expected_route": "github",
+      "requires_citation": true,
+      "gold_answer": "He standardizes each feature column: X_std = copy(X); then for column j: X_std[:, j] = (X[:, j] - X[:, j].mean()) / X[:, j].std(). Source: https://raw.githubusercontent.com/rasbt/python-machine-learning-book-3rd-edition/master/ch02/ch02.py",
+      "must_include": [
+        "(X[:, j] - X[:, j].mean()) / X[:, j].std()",
+        "standardize"
+      ],
+      "forbidden": [
+        "min-max scaling",
+        "divide by variance"
+      ],
+      "metadata": {
+        "source_priority_expected": [
+          "github"
+        ],
+        "notes": "Precise preprocessing formula check (often misremembered)."
+      }
+    },
+    {
+      "id": "DS23",
+      "topic": "ml-overfitting-regularization-vanderplas",
+      "difficulty": "Hard",
+      "question": "According to VanderPlas, what overfitting behavior appears when too many overlapping Gaussian basis functions are used in regression?",
+      "expected_route": "docs",
+      "requires_citation": true,
+      "gold_answer": "With too many overlapping Gaussian basis functions, the fit becomes overly flexible and can show extreme values between constrained points; adjacent basis coefficients can grow large and cancel each other, a hallmark of overfitting in this setup. Source: https://jakevdp.github.io/PythonDataScienceHandbook/05.06-linear-regression.html",
+      "must_include": [
+        "overly flexible",
+        "extreme values",
+        "coefficients",
+        "cancel"
+      ],
+      "forbidden": [
+        "always improves generalization",
+        "Gaussian bases cannot overfit"
+      ],
+      "metadata": {
+        "source_priority_expected": [
+          "docs"
+        ],
+        "notes": "Hard because it requires retrieving a specific qualitative description from the book."
+      }
+    },
+    {
+      "id": "DS24",
+      "topic": "ml-model-selection-vanderplas",
+      "difficulty": "Hard",
+      "question": "Why does the book say a single holdout split can be suboptimal, and what main advantage does cross-validation provide?",
+      "expected_route": "docs",
+      "requires_citation": true,
+      "gold_answer": "A holdout split reduces the data available for training (e.g., half the dataset is withheld), which can be problematic for small datasets; cross-validation performs multiple fits so each subset serves as validation in turn, giving a more robust estimate of model performance. Source: https://jakevdp.github.io/PythonDataScienceHandbook/05.03-hyperparameters-and-model-validation.html",
+      "must_include": [
+        "lost a portion of data",
+        "more robust",
+        "sequence of fits",
+        "each subset used as validation"
+      ],
+      "forbidden": [
+        "cross-validation trains only once",
+        "holdout always best"
+      ],
+      "metadata": {
+        "source_priority_expected": [
+          "docs"
+        ],
+        "notes": "Harder conceptual item grounded in the model validation narrative."
+      }
+    },
+    {
+      "id": "DS25",
+      "topic": "ml-cross-validation-vanderplas",
+      "difficulty": "Hard",
+      "question": "In the book's leave-one-out cross-validation example, which iterator is used and how is it passed to cross_val_score?",
+      "expected_route": "docs",
+      "requires_citation": true,
+      "gold_answer": "It uses LeaveOneOut with the dataset size and passes it as the cv argument, e.g., scores = cross_val_score(model, X, y, cv=LeaveOneOut(len(X))). Source: https://jakevdp.github.io/PythonDataScienceHandbook/05.03-hyperparameters-and-model-validation.html",
+      "must_include": [
+        "LeaveOneOut",
+        "cross_val_score",
+        "cv="
+      ],
+      "forbidden": [
+        "StratifiedKFold",
+        "cv=len(X) without LeaveOneOut"
+      ],
+      "metadata": {
+        "source_priority_expected": [
+          "docs"
+        ],
+        "notes": "Very specific API usage check from the book excerpt."
+      }
+    }
+  ]
+}
