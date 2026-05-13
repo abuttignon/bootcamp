@@ -16,7 +16,7 @@ def _already_ran(entry_point_name, parameters, git_commit, experiment_id=None):
     """
     experiment_id = experiment_id if experiment_id is not None else _get_experiment_id()
     client = MlflowClient()
-    all_runs = []  # reversed(client.search_runs([experiment_id]))
+    all_runs = reversed(client.search_runs([experiment_id]))
     for run in all_runs:
         tags = run.data.tags
         if tags.get(mlflow_tags.MLFLOW_PROJECT_ENTRY_POINT, None) != entry_point_name:
@@ -134,22 +134,22 @@ def workflow(use_cache):
             use_cache,
         )
 
-        # Step 5: Run ml_ops_experiment.retrieval query
-        print("=" * 60)
-        print("Step 5: Running retrieval query")
-        print("=" * 60)
-        retrieval_query = "What are the main topics in the indexed documents?"
-        os.environ["RETRIEVAL_QUERY"] = retrieval_query
-        retrieval_run = _get_or_run(
-            "retrieval",
-            {
-                "mlflow_pipeline_id": mlflow_pipeline_id,
-            },
-            git_commit,
-            use_cache,
-        )
+        # # Step 5: Run ml_ops_experiment.retrieval query
+        # print("=" * 60)
+        # print("Step 5: Running retrieval query")
+        # print("=" * 60)
+        # retrieval_query = "What are the main topics in the indexed documents?"
+        # os.environ["RETRIEVAL_QUERY"] = retrieval_query
+        # retrieval_run = _get_or_run(
+        #     "retrieval",
+        #     {
+        #         "mlflow_pipeline_id": mlflow_pipeline_id,
+        #     },
+        #     git_commit,
+        #     use_cache,
+        # )
 
-        # Step 6: Register prompts to MLflow Prompt Registry
+        # Step 5: Register prompts to MLflow Prompt Registry
         print("=" * 60)
         print("Step 6: Registering prompts to MLflow Prompt Registry")
         print("=" * 60)
@@ -162,7 +162,7 @@ def workflow(use_cache):
             use_cache,
         )
 
-        # Step 7: Evaluate prompts using evaluation dataset
+        # Step 5: Evaluate prompts using evaluation dataset
         print("=" * 60)
         print("Step 7: Evaluating prompts with evaluation dataset")
         print("=" * 60)

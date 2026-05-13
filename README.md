@@ -8,14 +8,14 @@ A hands-on bootcamp demonstrating four GenAI/MLOps patterns applied to recipe re
 |---|----------|-----------|----------------------|
 | 1 | Recipe recommendations via **Prompt Engineering** | LangChain + Claude/OpenAI | [`notebooks/recipes_prompt_engineering.ipynb`](notebooks/recipes_prompt_engineering.ipynb) |
 | 2 | Recipe recommendations via **RAG** | MongoDB Vector Search + OpenAI Embeddings | [`notebooks/recipes_rag.ipynb`](notebooks/recipes_rag.ipynb) |
-| 3 | Stock & Recipe Q&A via **MCP + Agent** | FastMCP + OpenAI tool selection | [`scripts/mcp_client.py`](scripts/mcp_client.py) |
+| 3 | Stock & Recipe Q&A via **MCP + Agent** | FastMCP + OpenAI tool selection | [`scripts/mcp_client.py`](scripts/mcp_client.py) · [`scripts/run_agent.py`](scripts/run_agent.py) |
 | 4 | Document ingestion & prompt evaluation via **MLOps** | MLflow Pipelines + Prompt Registry | [`scripts/run_mlflow_pipeline.py`](scripts/run_mlflow_pipeline.py) |
 
 Detailed documentation per use case:
 
 - [Prompt Engineering README](README_PROMPT_ENGINEERING.md)
 - [RAG README](README_RAG.md)
-- [MCP & Agent README](README_MCP.md)
+- [MCP & Agent README](README_MCP_AND_AGENT.md)
 - [MLOps Pipeline README](README_MLOPS.md)
 
 ---
@@ -154,7 +154,8 @@ bootcamp_handson_genai_mlops/
 │   └── mcp_server.py            # FastMCP server (stock + recipe tools)
 ├── scripts/
 │   ├── run_mlflow_pipeline.py   # Pipeline orchestrator
-│   └── mcp_client.py            # Interactive MCP client
+│   ├── mcp_client.py            # Single-turn MCP client (tool dispatcher)
+│   └── run_agent.py             # Multi-turn agent with router + tool use
 ├── notebooks/
 │   ├── recipes_rag.ipynb
 │   ├── recipes_prompt_engineering.ipynb
@@ -169,10 +170,16 @@ bootcamp_handson_genai_mlops/
 
 ```bash
 # Launch Jupyter for notebooks (use cases 1 & 2)
-jupyter lab
+# Outside an IDE, use:
+uv run --env-file .env jupyter lab
 
-# MCP demo (use case 3)
-  python scripts/mcp_client.py       # Terminal 2: interactive client
+# MCP demo (use case 3) — single-turn tool dispatcher
+python server/mcp_server.py          # Terminal 1: start SSE server
+python scripts/mcp_client.py         # Terminal 2: interactive agent
+
+# Agent demo (use case 3) — multi-turn agent with routing
+python server/mcp_server.py          # Terminal 1: start SSE server
+python scripts/run_agent.py          # Terminal 2: interactive agent
 
 # MLflow pipeline (use case 4)
 mlflow server  # View MLflow UI http://localhost:5000

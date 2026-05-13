@@ -27,12 +27,12 @@ data/external/      Stage 1       data/interim/     Stage 2     data/processed/ 
   ├── *.pdf    ─────────────►  NormalizedDocument  ─────────►  ProcessedChunk   ─────────────►  curated_chunks
   └── **/*.txt   normalize         (JSON)              chunk        (JSONL)             upload
 
-                Stage 4                        Stage 5                     Stage 6 + 7
-              MongoDB  ◄────────────────  data/retrieved/  ◄──────     MLflow Prompt Registry
-            (embeddings)     indexing          (JSONL)       retrieval    (register + evaluate)
+                Stage 4                      Stage 5 + 6
+              MongoDB  ◄────────────    MLflow Prompt Registry
+            (embeddings)  retrieval    (register + evaluate)
 ```
 
-**Seven sequential stages**, orchestrated by `run_mlflow_pipeline.py` with git-commit-based caching.
+**Six sequential stages**, orchestrated by `run_mlflow_pipeline.py` with git-commit-based caching.
 
 ---
 
@@ -134,13 +134,7 @@ python -m src.ml_ops_experiment.ingestion.upload_jsonl_to_db
 - Dimensions: `1536`
 - Similarity: `dotProduct`
 
-### Stage 5: `retrieval` — Execute Vector Search
-
-- Runs a configured query against the vector index
-- Outputs top-k results to `data/retrieved/`
-- Results are tracked as MLflow artifacts
-
-### Stage 6: `register_prompts` — Register to MLflow Prompt Registry
+### Stage 5: `register_prompts` — Register to MLflow Prompt Registry
 
 **Command:**
 
@@ -156,7 +150,7 @@ prompt = mlflow.genai.register_prompt(
 )
 ```
 
-### Stage 7: `evaluate_prompts` — Evaluate Prompts
+### Stage 6: `evaluate_prompts` — Evaluate Prompts
 
 - Loads prompts from registry by prompt name (`name_or_uri`)
 - Evaluates against structured dataset

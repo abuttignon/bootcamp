@@ -27,11 +27,6 @@ entry_points:
         mlflow_pipeline_id: str
     command: "python -m src.ml_ops_experiment.indexing.indexing --mlflow_pipeline_id={mlflow_pipeline_id}"
 
-  retrieval:
-    parameters:
-        mlflow_pipeline_id: str
-    command: "python -m src.ml_ops_experiment.retrieval.retrieval --mlflow_pipeline_id={mlflow_pipeline_id}"
-
   register_prompts:
     parameters:
         mlflow_pipeline_id: str

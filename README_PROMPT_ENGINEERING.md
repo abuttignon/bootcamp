@@ -45,7 +45,8 @@ v6 (latest) enforces a strict JSON output schema — the model validates ingredi
 ### Notebook (recommended)
 
 ```bash
-jupyter lab
+# Outside an IDE, use:
+uv run --env-file .env jupyter lab
 # Open notebooks/recipes_prompt_engineering.ipynb
 ```
 

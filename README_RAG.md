@@ -51,7 +51,8 @@ rag.setup()  # embeds documents + creates vector index (run once)
 ## Running the Demo
 
 ```bash
-jupyter lab
+# Outside an IDE, use:
+uv run --env-file .env jupyter lab
 # Open notebooks/recipes_rag.ipynb
 ```
 
