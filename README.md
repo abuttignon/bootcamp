@@ -58,19 +58,19 @@ MongoDB is used for storing recipe data and processed document chunks with vecto
 
 ### 2. Create a Database User
 
-1. **Security → Database Access → Add New Database User**
+1. **Database & Network Access → Database Users → Add New Database User**
 2. Authentication: **Password** — username `user`, password `notasecret`
-3. Privileges: **Read and write to any database**
+3. Privileges: **Built-in Role -> Read and write to any database**
 
 ### 3. Configure Network Access
 
-1. **Security → Network Access → Add IP Address**
+1. **Database & Network Access → IP Access List→ Add IP Address**
 2. For the bootcamp: **Allow Access from Anywhere** (`0.0.0.0/0`)
 
 ### 4. Get Your Connection String
 
 1. **Database → Connect → Connect your application**
-2. Driver: Python 3.12+. Copy the string:
+2. Language: Python. Client Lib: PyMongo (Syn). Copy the string:
    ```
    mongodb+srv://user:notasecret@bootcamp-cluster.xxxxx.mongodb.net/bootcamp?retryWrites=true&w=majority
    ```
