@@ -28,11 +28,14 @@ class RAGService:
             ]
         )
 
-    def generate_response(self, anfrage: str):
+    def generate_response(self, anfrage: str, retrieved_recipes: list[dict] | None = None):
+        """Erzeugt die LLM-Antwort. Wird `retrieved_recipes` nicht übergeben,
+        werden die Rezepte zuerst per Vektorsuche aus der Datenbank geholt."""
         PROMPT = "Answer the given query using metric measurements, to the best of your abilities, using the input query and the information provided under <Recipies>. Tell the user which recipes were retrieved and argue why you like or dislike each of them, given their request. Finish with a recommendation that should best suit the user and the full recipe for that dish.\n\n<User Request>\n{anfrage}\n </User Request>\n\n<Recipes>"
 
         PROMPT += f"User Request: {anfrage}\n\n"
-        retrieved_recipes = self.query_database(anfrage)
+        if retrieved_recipes is None:
+            retrieved_recipes = self.query_database(anfrage)
 
         for rec in retrieved_recipes:
             PROMPT += f"Title: {rec['title']}\nIngredients: {rec['ingredients']}\nInstructions:\n{rec['instructions']}\n\n"
@@ -43,11 +46,27 @@ class RAGService:
         )
         return response.choices[0].message.content
 
-    def query_database(self, anfrage):
+    def query_database(self, anfrage, anzahl_resultate=3) -> list[dict]:
+        """Vektorsuche: liefert die `anzahl_resultate` ähnlichsten Rezepte
+        (Titel, Zutaten, Anleitung, Score) als Liste zurück."""
         query_embedding = self.get_embedding(anfrage)
-        pipeline = self.create_vector_search_pipeline(query_embedding)
+        pipeline = self.create_vector_search_pipeline(query_embedding, anzahl_resultate)
 
-        return self.collection.aggregate(pipeline)
+        return list(self.collection.aggregate(pipeline))
+
+    def format_retrieved_recipes(self, recipes: list[dict], max_instruction_chars=300) -> str:
+        """Formatiert die Treffer der Vektorsuche lesbar für die Ausgabe im Notebook."""
+        lines = [f"Top {len(recipes)} Treffer der Vektorsuche:"]
+        for rank, rec in enumerate(recipes, start=1):
+            instructions = rec["instructions"]
+            if len(instructions) > max_instruction_chars:
+                instructions = instructions[:max_instruction_chars].rstrip() + " ..."
+            lines.append("")
+            lines.append(f"{rank}. {rec['title']}  (Score: {rec['score']:.4f})")
+            zutaten = [z.strip() for z in rec["ingredients"] if z.strip()]
+            lines.append(f"   Zutaten:   {', '.join(zutaten)}")
+            lines.append(f"   Anleitung: {instructions}")
+        return "\n".join(lines)
 
     def setup(self):
         documents = self.retrieve_documents()
