@@ -35,8 +35,7 @@ Detailed documentation per use case:
 # Install uv package manager
 curl -LsSf https://astral.sh/uv/install.sh | sh
 
-# Clone and setup
-cd bootcamp_handson_genai_mlops
+# Setup
 uv sync
 
 # Configure environment
@@ -69,16 +68,16 @@ MongoDB is used for storing recipe data and processed document chunks with vecto
 
 ### 4. Get Your Connection String
 
-1. **Database → Connect → Connect your application**
-2. Language: Python. Client Lib: PyMongo (Syn). Copy the string:
+1. **Database → Connect → Connect your application (Drivers and Client Libraries)**
+2. Language: Python. Client Lib: PyMongo (Synchronous). Copy the Cluster ID ("xxxxx") from connection string:
    ```
-   mongodb+srv://user:notasecret@bootcamp-cluster.xxxxx.mongodb.net/bootcamp?retryWrites=true&w=majority
+   mongodb+srv://<db_username>:<db_password>@bootcamp-cluster.xxxxx.mongodb.net/?appName=bootcamp-cluster
    ```
 
 ### 5. Configure `.env`
 
 ```bash
-MONGO_DB_URL=mongodb+srv://user:notasecret@bootcamp-cluster.xxxxx.mongodb.net/bootcamp?retryWrites=true&w=majority
+MONGO_DB_URL=mongodb+srv://user:notasecret@bootcamp-cluster.xxxxx.mongodb.net/
 MONGO_DB_NAME=bootcamp
 MONGO_COLLECTION_NAME_RECIPES=recipes
 MONGO_COLLECTION_NAME_RAG=curated_chunks
