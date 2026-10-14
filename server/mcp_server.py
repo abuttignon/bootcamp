@@ -6,7 +6,12 @@ from typing import Optional
 import pandas as pd
 import yfinance as yf
 from dotenv import load_dotenv
-from mcp.server.fastmcp import FastMCP
+try:
+    # mcp >= 2.0: FastMCP wurde zu MCPServer umbenannt
+    from mcp.server.mcpserver import MCPServer as FastMCP
+except ModuleNotFoundError:
+    # mcp 1.x
+    from mcp.server.fastmcp import FastMCP
 
 from recipes.rag.rag_service import RAGService
 

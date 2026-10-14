@@ -56,9 +56,11 @@ Defined in `server/mcp_server.py` (FastMCP):
 ## Running the MCP Client
 
 ### stdio mode (default — simplest, no server setup)
-
+Wichtig: stdio in .env setzen
 ```bash
 python scripts/mcp_client.py
+oder
+uv run python scripts/mcp_client.py
 ```
 
 The client spawns `server/mcp_server.py` as a subprocess automatically.
